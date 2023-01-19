@@ -8,7 +8,7 @@ module.exports = {
       },
       fontFamily: {
         regular: "Inter_400Regular",
-        semibold: "Inter_600Semibold",
+        semibold: "Inter_600SemiBold",
         bold: "Inter_600Bold",
         extrabold: "Inter_600ExtraBold",
       },
