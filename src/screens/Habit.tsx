@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Loading } from "../components/Loading";
 import { api } from "../lib/axios";
 import { generateProgressPercentage } from "../utils/generate-progress-percentage";
+import { HabitsEmpty } from "../components/HabitsEmpty";
 interface HabitParams {
   date: string;
 }
@@ -22,7 +23,10 @@ interface DayInfoProps {
 
 export function Habit() {
   const [loading, setLoading] = useState(true);
-  const [dayInfo, setDayInfo] = useState<DayInfoProps>();
+  const [dayInfo, setDayInfo] = useState<DayInfoProps>({
+    completedHabits: [],
+    possibleHabits: [],
+  });
   // const [completedHabits, setCompletedHabits] = useState<string[]>([]);
   const route = useRoute();
   const { date } = route.params as HabitParams;
@@ -91,7 +95,7 @@ export function Habit() {
         </Text>
         <ProgressBar progress={habitsProgress} />
         <View className="mt-6">
-          {dayInfo?.possibleHabits &&
+          {dayInfo?.possibleHabits.length > 0 ? (
             dayInfo?.possibleHabits.map((habit) => (
               <Checkbox
                 onPress={() => handleToggleHabit(habit.id)}
@@ -99,7 +103,10 @@ export function Habit() {
                 key={habit.id}
                 title={habit.title}
               />
-            ))}
+            ))
+          ) : (
+            <HabitsEmpty />
+          )}
         </View>
       </ScrollView>
     </View>
