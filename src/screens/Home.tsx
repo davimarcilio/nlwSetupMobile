@@ -1,8 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, Alert } from "react-native";
 import { DAY_SIZE, HabitDay } from "../components/HabitDay";
 import { Header } from "../components/Header";
+import { Loading } from "../components/Loading";
 import { api } from "../lib/axios";
 
 import { generateDatesFromYearBeginning } from "../utils/generate-dates-from-year-beginning";
@@ -12,9 +14,17 @@ const datesFromYearStart = generateDatesFromYearBeginning();
 
 const minimumSummaryDateSizes = 18 * 5;
 const amoutOfDaysToFill = minimumSummaryDateSizes - datesFromYearStart.length;
+
+interface SummaryProps {
+  id: string;
+  date: Date;
+  amout: number;
+  completed: number;
+}
+
 export function Home() {
   const [loading, setLoading] = useState(true);
-  const [summary, setSummary] = useState(null);
+  const [summary, setSummary] = useState<SummaryProps[]>([]);
 
   const { navigate } = useNavigation();
 
@@ -35,6 +45,10 @@ export function Home() {
     fetchData();
   }, []);
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <View className="flex-1 bg-background px-8 pt-16">
       <Header />
@@ -54,12 +68,20 @@ export function Home() {
         contentContainerStyle={{ paddingBottom: 50 }}
       >
         <View className="flex-row flex-wrap">
-          {datesFromYearStart.map((date) => (
-            <HabitDay
-              onPress={() => navigate("habit", { date: date.toISOString() })}
-              key={date.toString()}
-            />
-          ))}
+          {datesFromYearStart.map((date) => {
+            const dayWithHabits = summary.find((day) => {
+              return dayjs(date).isSame(day.date, "day");
+            });
+            return (
+              <HabitDay
+                date={date}
+                amout={dayWithHabits?.amout}
+                completed={dayWithHabits?.completed}
+                onPress={() => navigate("habit", { date: date.toISOString() })}
+                key={date.toString()}
+              />
+            );
+          })}
           {amoutOfDaysToFill > 0 &&
             Array.from({ length: amoutOfDaysToFill }).map((_, index) => (
               <View
