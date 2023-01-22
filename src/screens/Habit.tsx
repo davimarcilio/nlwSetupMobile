@@ -70,13 +70,18 @@ export function Habit() {
   async function fetchHabits() {
     try {
       setLoading(true);
+      const parsedFetchDate = dayjs(date).endOf("day").toDate();
 
-      const response = await api.get("day", { params: { date } });
+      const response = await api.get("day", {
+        params: { date: parsedFetchDate },
+      });
+      console.log(response.data);
+
       setDayInfo(response.data);
       // setCompletedHabits(response.data.completedHabits);
     } catch (error) {
       console.log(error);
-      Alert.alert("Ops", "Não foi carregar as informacoes dos hábitos");
+      Alert.alert("Ops", "Não foi carregar as informações dos hábitos");
     } finally {
       setLoading(false);
     }

@@ -74,6 +74,7 @@ export function Home() {
             const dayWithHabits = summary.find((day) => {
               return dayjs(date).isSame(day.date, "day");
             });
+
             return (
               <HabitDay
                 date={date}
